@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AeroTech English - Planner Poliglota & Aviation Master</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        cockpit: {
+                            dark: '#070b12',
+                            card: '#0c1322',
+                            border: '#1e293b',
+                            cyan: '#06b6d4',
+                            green: '#10b981',
+                            amber: '#f59e0b',
+                            blue: '#3b82f6',
+                            red: '#ef4444'
+                        }
+                    },
+                    fontFamily: {
+                        tech: ['Chakra Petch', 'sans-serif'],
+                        mono: ['Share Tech Mono', 'monospace'],
+                        sans: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts: Chakra Petch, Share Tech Mono, Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&family=Inter:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <!-- FontAwesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #070b12;
+            color: #f8fafc;
+        }
+        h1, h2, h3, h4, .font-tech {
+            font-family: 'Chakra Petch', sans-serif;
+        }
+        .font-mono {
+            font-family: 'Share Tech Mono', monospace;
+        }
+        .glass-panel {
+            background: linear-gradient(135deg, rgba(12, 19, 34, 0.9) 0%, rgba(7, 11, 18, 0.95) 100%);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(30, 41, 59, 0.8);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #070b12;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #06b6d4;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-[#070b12] text-slate-100 flex flex-col selection:bg-cyan-500 selection:text-slate-950">
+
+    <!-- TOP AVIONICS HEADER HUD -->
+    <header class="border-b border-slate-800 bg-[#0c1322]/90 backdrop-blur-md sticky top-0 z-50 px-4 py-3">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+            
+            <!-- Pilot Profile Identity -->
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-[0_0_20px_rgba(6,182,212,0.4)] text-slate-950 font-bold text-xl">
+                    <i class="fa-solid fa-plane-up"></i>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h1 id="user-display-name" class="font-tech text-lg font-bold text-white tracking-wide">Allan da Costa Dantas</h1>
+                        <span id="user-display-age" class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-400 border border-cyan-500/30">23 Yrs</span>
+                    </div>
+                    <div class="flex items-center gap-2 text-xs text-slate-400 font-mono">
+                        <span><i class="fa-solid fa-wrench text-cyan-400"></i> <span id="card-target-career">FAA A&P Licensed Mechanic</span></span>
+                        <span>•</span>
+                        <span class="text-emerald-400"><i class="fa-solid fa-globe"></i> <span id="card-english-focus">Technical Aviation Maintenance</span></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cockpit HUD Metrics -->
+            <div class="flex items-center gap-3 flex-wrap">
+                <div class="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+                    <span class="text-xs font-mono text-slate-300">CEFR: <strong id="user-display-cefr" class="text-cyan-400">A1 Beginner</strong></span>
+                </div>
+                <div class="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 flex items-center gap-2">
+                    <i class="fa-solid fa-bolt text-amber-400 text-xs"></i>
+                    <span class="text-xs font-mono text-slate-300">XP: <strong id="user-display-xp" class="text-amber-400">50</strong></span>
+                </div>
+                <div class="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 flex items-center gap-2">
+                    <i class="fa-solid fa-fire text-red-500 text-xs"></i>
+                    <span class="text-xs font-mono text-slate-300">Streak: <strong id="user-display-streak" class="text-red-400">1 Day</strong></span>
+                </div>
+                <div class="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 flex items-center gap-2">
+                    <i class="fa-solid fa-clock text-emerald-400 text-xs"></i>
+                    <span class="text-xs font-mono text-slate-300">Target: <strong id="user-display-time" class="text-emerald-400">2h / Day</strong></span>
+                </div>
+                <button onclick="toggleAudio()" id="audio-toggle-btn" class="p-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-400 hover:text-cyan-400 transition" title="Sound Effects">
+                    <i class="fa-solid fa-volume-high text-sm"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Tab Navigation Bar -->
+        <div class="max-w-7xl mx-auto flex items-center gap-2 overflow-x-auto pt-3 border-t border-slate-800/60 mt-3 pb-1">
+            <button onclick="switchTab('planner')" id="tab-planner" class="px-4 py-2 rounded-xl font-tech text-xs font-bold transition flex items-center gap-2 bg-cyan-500 text-slate-950 shadow-[0_0_15px_rgba(6,182,212,0.3)] whitespace-nowrap">
+                <i class="fa-solid fa-calendar-days"></i> 1. Planner & Routine
+            </button>
+            <button onclick="switchTab('practice')" id="tab-practice" class="px-4 py-2 rounded-xl font-tech text-xs font-bold transition flex items-center gap-2 bg-slate-900 text-slate-300 hover:text-white border border-slate-800 whitespace-nowrap">
+                <i class="fa-solid fa-gamepad"></i> 2. Duolingo Engine
+            </button>
+            <button onclick="switchTab('books')" id="tab-books" class="px-4 py-2 rounded-xl font-tech text-xs font-bold transition flex items-center gap-2 bg-slate-900 text-slate-300 hover:text-white border border-slate-800 whitespace-nowrap">
+                <i class="fa-solid fa-book-open"></i> 3. Books & AMM Reader
+            </button>
+            <button onclick="switchTab('srs')" id="tab-srs" class="px-4 py-2 rounded-xl font-tech text-xs font-bold transition flex items-center gap-2 bg-slate-900 text-slate-300 hover:text-white border border-slate-800 whitespace-nowrap">
+                <i class="fa-solid fa-brain"></i> 4. SRS Deck <span id="srs-badge" class="px-1.5 py-0.2 rounded-full bg-cyan-500/20 text-cyan-400 text-[10px]">5</span>
+            </button>
+            <button onclick="switchTab('logbook')" id="tab-logbook" class="px-4 py-2 rounded-xl font-tech text-xs font-bold transition flex items-center gap-2 bg-slate-900 text-slate-300 hover:text-white border border-slate-800 whitespace-nowrap">
+                <i class="fa-solid fa-clipboard-check"></i> 5. Logbook & ATA 100
+            </button>
+        </div>
+    </header>
+
+    <!-- MAIN APP CONTAINER -->
+    <main class="max-w-7xl mx-auto p-4 md:p-6 w-full flex-grow space-y-6">
+
+        <!-- SECTION 1: PLANNER & ROUTINE -->
+        <section id="sec-planner" class="tab-content space-y-6">
+            
+            <!-- Configurator Panel Header -->
+            <div class="glass-panel p-6 rounded-2xl space-y-6">
+                <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+                    <div>
+                        <h2 class="font-tech text-xl font-bold text-white flex items-center gap-2.5">
+                            <i class="fa-solid fa-sliders text-cyan-400"></i> Planner Poliglota & Career Configurator
+                        </h2>
+                        <p class="text-xs text-slate-400 font-mono">Personalize seus horários, foco técnico e metas de carreira rumo ao exterior.</p>
+                    </div>
+                    <button onclick="openSettingsModal()" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-950 font-tech font-bold text-xs hover:opacity-90 transition shadow-[0_0_15px_rgba(6,182,212,0.4)] flex items-center gap-2">
+                        <i class="fa-solid fa-gear"></i> EDIT ROUTINE & CAREER PLAN
+                    </button>
+                </div>
+
+                <!-- Quick Overview Cards -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 space-y-1">
+                        <span class="text-[10px] font-mono text-slate-400 uppercase">Target Career Goal</span>
+                        <h3 id="panel-career" class="font-tech text-sm font-bold text-cyan-400">FAA A&P Licensed Mechanic</h3>
+                    </div>
+                    <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 space-y-1">
+                        <span class="text-[10px] font-mono text-slate-400 uppercase">English Focus Area</span>
+                        <h3 id="panel-focus" class="font-tech text-sm font-bold text-emerald-400">Technical Aviation Maintenance</h3>
+                    </div>
+                    <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 space-y-1">
+                        <span class="text-[10px] font-mono text-slate-400 uppercase">Work Schedule / Shift</span>
+                        <h3 id="panel-shift" class="font-tech text-sm font-bold text-amber-400">Standard Week (5x2)</h3>
+                    </div>
+                </div>
+
+                <!-- CEFR Mastery Milestone Projections -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2">
+                    <div class="p-4 rounded-xl bg-slate-950 border border-slate-800/80 space-y-1">
+                        <span class="text-[10px] font-mono text-slate-500">A1 → A2 (ELEMENTARY)</span>
+                        <h4 class="font-tech text-lg font-bold text-cyan-400" id="timeline-a2">~8 Weeks</h4>
+                        <p class="text-[11px] text-slate-400">Foundation & Basic Verbs</p>
+                    </div>
+                    <div class="p-4 rounded-xl bg-slate-950 border border-slate-800/80 space-y-1">
+                        <span class="text-[10px] font-mono text-slate-500">B1 → B2 (TECHNICAL LINE)</span>
+                        <h4 class="font-tech text-lg font-bold text-emerald-400" id="timeline-b2">~18 Weeks</h4>
+                        <p class="text-[11px] text-slate-400">AMM Manuals & Logs</p>
+                    </div>
+                    <div class="p-4 rounded-xl bg-slate-950 border border-slate-800/80 space-y-1">
+                        <span class="text-[10px] font-mono text-slate-500">C1 → C2 (FLUENCY & AUDITS)</span>
+                        <h4 class="font-tech text-lg font-bold text-amber-400" id="timeline-c2">~27 Weeks</h4>
+                        <p class="text-[11px] text-slate-400">FAA/EASA Interview Ready</p>
+                    </div>
+                    <div class="p-4 rounded-xl bg-slate-950 border border-slate-800/80 space-y-1">
+                        <span class="text-[10px] font-mono text-slate-500">TARGET COMPLETION</span>
+                        <h4 class="font-tech text-lg font-bold text-blue-400" id="timeline-target">November 2027</h4>
+                        <p class="text-[11px] text-slate-400" id="timeline-hours-desc">At 2 Hours / Day</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Daily Action Matrix & Weekly Schedule -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                
+                <!-- Daily Checklist (2 Hours Breakdown) -->
+                <div class="lg:col-span-2 glass-panel p-6 rounded-2xl space-y-4">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+                        <h3 class="font-tech text-lg font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-list-check text-cyan-400"></i> Allan's Daily Action Matrix
+                        </h3>
+                        <span id="daily-progress-badge" class="font-mono text-xs text-cyan-400 bg-cyan-500/15 px-3 py-1 rounded-full border border-cyan-500/30">0 / 5 Completed</span>
+                    </div>
+
+                    <div id="daily-checklist-container" class="space-y-3">
+                        <!-- Injected by renderDailyChecklist() -->
+                    </div>
+                </div>
+
+                <!-- Weekly Focus Modules -->
+                <div class="glass-panel p-6 rounded-2xl space-y-4">
+                    <div class="border-b border-slate-800 pb-4">
+                        <h3 class="font-tech text-lg font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-calendar-week text-emerald-400"></i> Weekly Study Matrix
+                        </h3>
+                        <p class="text-xs text-slate-400 font-mono">Cronograma estruturado para 2h+ diárias</p>
+                    </div>
+
+                    <div class="space-y-3 font-mono text-xs">
+                        <div class="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 space-y-1">
+                            <div class="flex items-center justify-between text-cyan-400 font-bold">
+                                <span>MON / WED / FRI</span>
+                                <span>120 MINS</span>
+                            </div>
+                            <p class="text-slate-300">Technical Aviation Focus (AMM Manuals, ATA Spec 100, Defect Log Writing, Tool Names).</p>
+                        </div>
+
+                        <div class="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 space-y-1">
+                            <div class="flex items-center justify-between text-emerald-400 font-bold">
+                                <span>TUE / THU</span>
+                                <span>120 MINS</span>
+                            </div>
+                            <p class="text-slate-300">Foundational English (Verb To Be, Present, Past, Future, Pronouns: I, He, She, It, We, They).</p>
+                        </div>
+
+                        <div class="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 space-y-1">
+                            <div class="flex items-center justify-between text-amber-400 font-bold">
+                                <span>SAT / SUN</span>
+                                <span>60 MINS</span>
+                            </div>
+                            <p class="text-slate-300">Spaced Repetition Review (SRS Deck), Video Dialogue Transcripts, Speech Practice.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- SECTION 2: DUOLINGO PRACTICE ENGINE (UNLIMITED RETRIES & PROCEDURAL) -->
+        <section id="sec-practice" class="tab-content hidden space-y-6">
+            <div class="glass-panel p-6 rounded-2xl border border-slate-800 space-y-6 bg-slate-950/80 backdrop-blur-md shadow-2xl">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+                    <div class="flex items-center gap-3">
+                        <div class="p-2.5 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-400">
+                            <i class="fa-solid fa-gamepad text-lg"></i>
+                        </div>
+                        <div>
+                            <h2 class="font-tech text-xl font-bold text-white">Duolingo Practice Engine (Tentativas Ilimitadas)</h2>
+                            <p class="text-xs text-slate-400 font-mono">Prática interativa de escuta, verbos, tempos verbais (To Be, Past, Present, Future) e montagem de frases</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 text-xs font-mono font-bold">
+                            <i class="fa-solid fa-infinity"></i> Unlimited Retries Active
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Category Filters -->
+                <div class="flex items-center gap-2 flex-wrap">
+                    <button onclick="filterPracticeCategory('all')" class="px-3.5 py-1.5 rounded-xl bg-cyan-500 text-slate-950 font-tech font-bold text-xs transition">Todos os Módulos</button>
+                    <button onclick="filterPracticeCategory('grammar')" class="px-3.5 py-1.5 rounded-xl bg-slate-900 text-slate-300 hover:text-white border border-slate-800 font-tech font-bold text-xs transition">Gramática (To Be, Tenses, Pronouns)</button>
+                    <button onclick="filterPracticeCategory('listening')" class="px-3.5 py-1.5 rounded-xl bg-slate-900 text-slate-300 hover:text-white border border-slate-800 font-tech font-bold text-xs transition">Listening & Speech</button>
+                    <button onclick="filterPracticeCategory('verbs')" class="px-3.5 py-1.5 rounded-xl bg-slate-900 text-slate-300 hover:text-white border border-slate-800 font-tech font-bold text-xs transition">Technical Verbs</button>
+                    <button onclick="filterPracticeCategory('syntax')" class="px-3.5 py-1.5 rounded-xl bg-slate-900 text-slate-300 hover:text-white border border-slate-800 font-tech font-bold text-xs transition">Log Syntax</button>
+                </div>
+
+                <!-- Exercise Box -->
+                <div id="exercise-container" class="p-6 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-6">
+                    <!-- Injected by renderExercise() -->
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: BOOKS & AMM MANUAL READER -->
+        <section id="sec-books" class="tab-content hidden space-y-6">
+            <div class="glass-panel p-6 rounded-2xl border border-slate-800 space-y-6 bg-slate-950/80 backdrop-blur-md shadow-2xl">
+                <div class="flex items-center justify-between border-b border-slate-800/80 pb-4">
+                    <div class="flex items-center gap-3">
+                        <div class="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400">
+                            <i class="fa-solid fa-book-open text-lg"></i>
+                        </div>
+                        <div>
+                            <h2 class="font-tech text-xl font-bold text-white">Books & AMM Manual Reader (Imersão Técnica)</h2>
+                            <p class="text-xs text-slate-400 font-mono">Leitura técnica completa de manuais ATA, turbinas e sistemas elétricos</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button onclick="randomBookPassage()" class="px-3 py-1.5 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 hover:bg-emerald-500 hover:text-slate-950 font-tech font-bold text-xs transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-shuffle"></i> Texto Aleatório
+                        </button>
+                        <span id="book-counter" class="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 text-xs font-mono font-bold">1 / 6</span>
+                    </div>
+                </div>
+
+                <div class="p-6 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-4">
+                    <div class="flex items-center justify-between flex-wrap gap-2">
+                        <h3 id="book-title" class="font-tech text-lg font-bold text-emerald-400">AMM ATA 29 - Hydraulic Line Inspection</h3>
+                        <span id="book-level" class="text-[10px] font-mono px-2.5 py-1 rounded bg-slate-800 text-slate-300 border border-slate-700">B1 - Technical</span>
+                    </div>
+                    
+                    <p id="book-text" class="text-sm font-mono text-slate-200 leading-relaxed p-4 rounded-xl bg-slate-950 border border-slate-800">
+                        Before pressurizing hydraulic system 1, perform a visual inspection of all rigid lines and flexible hoses between fuselage frame 24 and frame 32...
+                    </p>
+
+                    <div class="space-y-2">
+                        <span class="text-xs font-mono font-bold text-slate-400 uppercase tracking-wider block">Vocabulário Técnico & Glossário Integrado:</span>
+                        <div id="book-notes" class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-mono">
+                            <!-- Injected by loadBookPassage() -->
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between pt-4 border-t border-slate-800">
+                        <button onclick="speakCurrentBookText()" class="px-4 py-2 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 hover:bg-emerald-500 hover:text-slate-950 font-tech font-bold text-xs transition flex items-center gap-2">
+                            <i class="fa-solid fa-volume-high"></i> Ouvir Leitura Técnica
+                        </button>
+                        <div class="flex gap-2">
+                            <button onclick="prevBookPassage()" class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 hover:text-white font-tech text-xs transition"><i class="fa-solid fa-arrow-left"></i> Anterior</button>
+                            <button onclick="nextBookPassage()" class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 hover:text-white font-tech text-xs transition">Próximo <i class="fa-solid fa-arrow-right"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4: SRS FLASHCARDS DECK -->
+        <section id="sec-srs" class="tab-content hidden space-y-6">
+            <div class="glass-panel p-6 rounded-2xl border border-slate-800 space-y-6 bg-slate-950/80 backdrop-blur-md shadow-2xl max-w-3xl mx-auto">
+                <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+                    <div class="flex items-center gap-3">
+                        <div class="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400">
+                            <i class="fa-solid fa-brain text-lg"></i>
+                        </div>
+                        <div>
+                            <h2 class="font-tech text-xl font-bold text-white">Spaced Repetition System (SRS Deck)</h2>
+                            <p class="text-xs text-slate-400 font-mono">Flashcards de memorização de vocabulário aeronáutico e gramática essencial</p>
+                        </div>
+                    </div>
+                    <span id="srs-counter" class="px-3 py-1 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/40 text-xs font-mono font-bold">1 / 5</span>
+                </div>
+
+                <!-- Flashcard Display Box -->
+                <div class="p-8 rounded-2xl bg-slate-900/90 border border-slate-800 text-center space-y-6 min-h-[240px] flex flex-col justify-center items-center relative">
+                    <span class="absolute top-4 left-4 text-[10px] font-mono px-2.5 py-1 rounded bg-slate-800 text-slate-300 border border-slate-700" id="srs-category">ATA 29 - Hydraulics</span>
+                    
+                    <div class="space-y-2">
+                        <h3 id="srs-term" class="font-tech text-2xl font-bold text-amber-400">Hydraulic Actuator</h3>
+                        <p id="srs-definition" class="text-sm font-mono text-slate-300 hidden p-4 rounded-xl bg-slate-950 border border-slate-800 max-w-lg mx-auto">
+                            Atuador hidráulico responsável por converter pressão de fluido em movimento mecânico linear.
+                        </p>
+                    </div>
+
+                    <button onclick="revealSrsAnswer()" id="srs-reveal-btn" class="px-6 py-2.5 rounded-xl bg-amber-500/20 text-amber-400 border border-amber-500/40 hover:bg-amber-500 hover:text-slate-950 font-tech font-bold text-xs transition">
+                        Mostrar Definição & Tradução
+                    </button>
+                </div>
+
+                <!-- SRS Grading Buttons -->
+                <div id="srs-grading-area" class="grid grid-cols-3 gap-3 hidden">
+                    <button onclick="gradeSrsCard('hard')" class="p-3 rounded-xl bg-red-500/20 border border-red-500/40 text-red-400 font-tech font-bold text-xs hover:bg-red-500 hover:text-slate-950 transition">
+                        <i class="fa-solid fa-triangle-exclamation"><b> Hard</b></i>
+                    </button>
+                    <button onclick="gradeSrsCard('medium')" class="p-3 rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-400 font-tech font-bold text-xs hover:bg-amber-500 hover:text-slate-950 transition">
+                        <i class="fa-solid fa-check"><b> Good</b></i>
+                    </button>
+                    <button onclick="gradeSrsCard('easy')" class="p-3 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 font-tech font-bold text-xs hover:bg-emerald-500 hover:text-slate-950 transition">
+                        <i class="fa-solid fa-bolt"><b> Easy</b></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 5: LOGBOOK & ATA 100 -->
+        <section id="sec-logbook" class="tab-content hidden space-y-6">
+            <div class="glass-panel p-6 rounded-2xl border border-slate-800 space-y-6 bg-slate-950/80 backdrop-blur-md shadow-2xl">
+                <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+                    <div class="flex items-center gap-3">
+                        <div class="p-2.5 rounded-xl bg-blue-500/10 border border-blue-500/30 text-blue-400">
+                            <i class="fa-solid fa-clipboard-check text-lg"></i>
+                        </div>
+                        <div>
+                            <h2 class="font-tech text-xl font-bold text-white">FAA/EASA Maintenance Logbook & ATA Spec 100</h2>
+                            <p class="text-xs text-slate-400 font-mono">Gerador oficial de registros de manutenção e índice ATA Spec 100</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Logbook Generator Form -->
+                    <div class="space-y-4 p-6 rounded-2xl bg-slate-900/80 border border-slate-800">
+                        <h3 class="font-tech text-base font-bold text-blue-400">Criar Entrada de Logbook</h3>
+                        
+                        <div class="space-y-3 text-xs font-mono">
+                            <div>
+                                <label class="text-slate-400 block mb-1">Ação Técnica (Verbo):</label>
+                                <select id="log-action" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white font-mono focus:border-blue-500 outline-none">
+                                    <option value="Inspected">Inspected (Inspecionado)</option>
+                                    <option value="Replaced">Replaced (Substituído)</option>
+                                    <option value="Torqued">Torqued (Torqueado)</option>
+                                    <option value="Bled">Bled (Sangrado - Sistema Hidráulico)</option>
+                                    <option value="Troubleshot">Troubleshot (Diagnosticado)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-slate-400 block mb-1">Componente / Sistema:</label>
+                                <input type="text" id="log-component" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white font-mono focus:border-blue-500 outline-none" value="main landing gear hydraulic actuator">
+                            </div>
+                            <div>
+                                <label class="text-slate-400 block mb-1">Capítulo ATA Spec 100:</label>
+                                <select id="log-ata" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white font-mono focus:border-blue-500 outline-none">
+                                    <option value="ATA 29">ATA 29 - Hydraulic Power</option>
+                                    <option value="ATA 32">ATA 32 - Landing Gear</option>
+                                    <option value="ATA 71">ATA 71 - Powerplant (Turbine)</option>
+                                    <option value="ATA 24">ATA 24 - Electrical Power</option>
+                                    <option value="ATA 27">ATA 27 - Flight Controls</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <button onclick="generateLogEntry()" class="w-full py-3 rounded-xl bg-blue-500 text-slate-950 font-tech font-bold text-xs hover:bg-cyan-400 transition shadow-[0_0_15px_rgba(59,130,246,0.3)]">
+                            GERAR REGISTRO TÉCNICO OFICIAL
+                        </button>
+                    </div>
+
+                    <!-- Generated Log Preview & ATA Index -->
+                    <div class="space-y-4 p-6 rounded-2xl bg-slate-900/80 border border-slate-800 flex flex-col justify-between">
+                        <div>
+                            <h3 class="font-tech text-base font-bold text-white mb-2">Pré-visualização do Logbook</h3>
+                            <div id="log-preview-box" class="p-4 rounded-xl bg-slate-950 border border-slate-800 font-mono text-xs text-slate-300 leading-relaxed min-h-[100px] flex items-center justify-center text-slate-500 italic">
+                                Preencha os campos ao lado e clique em Gerar Registro...
+                            </div>
+                        </div>
+
+                        <div class="pt-4 border-t border-slate-800 space-y-2">
+                            <span class="text-xs font-mono font-bold text-slate-400">ATA Spec 100 Índice Rápido:</span>
+                            <div id="ata-index-container" class="grid grid-cols-2 gap-2 text-xs font-mono">
+                                <!-- Rendered dynamically -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- SETTINGS MODAL: EDIT ROUTINE & CAREER PLAN -->
+    <div id="settings-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden items-center justify-center p-4">
+        <div class="glass-panel p-6 md:p-8 rounded-2xl max-w-lg w-full space-y-6 border border-slate-800 shadow-2xl">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+                <h3 class="font-tech text-lg font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-sliders text-cyan-400"></i> Edit Routine & Career Plan
+                </h3>
+                <button onclick="closeSettingsModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+
+            <div class="space-y-4 font-mono text-xs">
+                <div>
+                    <label class="text-slate-300 block mb-1">Horas Disponíveis por Dia:</label>
+                    <select id="modal-input-time" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:border-cyan-500 outline-none">
+                        <option value="1">1 Hora / Dia</option>
+                        <option value="2" selected>2 Horas / Dia (Ritmo Acelerado)</option>
+                        <option value="3">3 Horas / Dia (Imersão Total)</option>
+                        <option value="4">4+ Horas / Dia (Intensivo Exterior)</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="text-slate-300 block mb-1">Foco Principal de Aprendizado:</label>
+                    <select id="modal-input-focus" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:border-cyan-500 outline-none">
+                        <option value="Technical Aviation Maintenance" selected>Inglês Técnico de Aeronaves & Manutenção (ATA, Ferramentas)</option>
+                        <option value="General Conversation & Grammar">Conversação Geral & Gramática Avançada</option>
+                        <option value="Avionics & IT Systems">Aviônicos & Sistemas de TI Aeronáutica</option>
+                        <option value="Executive & Offshore Operations">Operações Executivas & Offshore</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="text-slate-300 block mb-1">Meta de Carreira / Cargo Desejado:</label>
+                    <select id="modal-input-career" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:border-cyan-500 outline-none">
+                        <option value="FAA A&P Licensed Mechanic" selected>FAA A&P Licensed Mechanic (EUA)</option>
+                        <option value="EASA Part-66 Technician" selected>EASA Part-66 Technician (Europa)</option>
+                        <option value="Offshore Maintenance Specialist">Offshore Maintenance Specialist</option>
+                        <option value="Commercial MRO Lead Inspector">Commercial MRO Lead Inspector</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="text-slate-300 block mb-1">Escala de Trabalho / Turnos:</label>
+                    <select id="modal-input-shift" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:border-cyan-500 outline-none">
+                        <option value="Standard Week (5x2)" selected>Segunda a Sexta (Padrão 5x2)</option>
+                        <option value="Offshore Rotation (14x14)">Escala Offshore (14x14)</option>
+                        <option value="Rotating Shifts">Turnos Revezados (Manhã/Tarde/Noite)</option>
+                        <option value="Flexible Schedule">Horários Flexíveis</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-800">
+                <button onclick="closeSettingsModal()" class="px-5 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 font-tech font-bold text-xs hover:bg-slate-800 transition">Cancelar</button>
+                <button onclick="saveSettingsModal()" class="px-6 py-2.5 rounded-xl bg-cyan-500 text-slate-950 font-tech font-bold text-xs hover:bg-cyan-400 transition shadow-[0_0_15px_rgba(6,182,212,0.4)]">SALVAR PLANNER</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN SCRIPT ENGINE -->
+    <script>
+        // --- GLOBAL STATE & PERSISTENCE ---
+        let userProfile = {
+            name: "Allan da Costa Dantas",
+            age: 23,
+            cefr: "A1 Beginner",
+            xp: 50,
+            streak: 1,
+            dailyHours: "2",
+            englishFocus: "Technical Aviation Maintenance",
+            targetCareer: "FAA A&P Licensed Mechanic",
+            workShift: "Standard Week (5x2)",
+            audioEnabled: true
+        };
+
+        let dailyTasks = [
+            { id: 1, title: "Technical Listening & TTS Drill", desc: "Complete interactive sentence construction drill.", time: "30 Mins", completed: false, tabTarget: "practice" },
+            { id: 2, title: "Foundational Grammar (Verb To Be & Tenses)", desc: "Daily drill on I, He, She, It, Present, Past, Future.", time: "30 Mins", completed: false, tabTarget: "practice" },
+            { id: 3, title: "Verb Conjugation & Log Entry", desc: "Practice 5 maintenance log actions in Logbook Builder.", time: "30 Mins", completed: false, tabTarget: "logbook" },
+            { id: 4, title: "Spaced Repetition Flashcards", desc: "Review queued terms in SRS Flashcard deck.", time: "15 Mins", completed: false, tabTarget: "srs" },
+            { id: 5, title: "Pronunciation & Shadowing", desc: "Read aloud technical log entries using Speech Synthesis.", time: "15 Mins", completed: false, tabTarget: "books" }
+        ];
+
+        // --- WEB AUDIO API SYNTHESIZER ---
+        let audioCtx = null;
+        function getAudioContext() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            return audioCtx;
+        }
+
+        function playSound(type) {
+            if (!userProfile.audioEnabled) return;
+            try {
+                const ctx = getAudioContext();
+                if (ctx.state === 'suspended') ctx.resume();
+                
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+
+                const now = ctx.currentTime;
+                if (type === 'click') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(600, now);
+                    gain.gain.setValueAtTime(0.05, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+                    osc.start(now);
+                    osc.stop(now + 0.08);
+                } else if (type === 'correct') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(440, now);
+                    osc.frequency.setValueAtTime(660, now + 0.1);
+                    gain.gain.setValueAtTime(0.1, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+                    osc.start(now);
+                    osc.stop(now + 0.25);
+                } else if (type === 'error') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(220, now);
+                    osc.frequency.setValueAtTime(150, now + 0.15);
+                    gain.gain.setValueAtTime(0.1, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+                    osc.start(now);
+                    osc.stop(now + 0.3);
+                }
+            } catch (e) {
+                console.log("Audio not supported or blocked", e);
+            }
+        }
+
+        function toggleAudio() {
+            userProfile.audioEnabled = !userProfile.audioEnabled;
+            const btn = document.getElementById('audio-toggle-btn');
+            if (btn) {
+                btn.innerHTML = userProfile.audioEnabled ? '<i class="fa-solid fa-volume-high text-sm"></i>' : '<i class="fa-solid fa-volume-xmark text-sm text-red-400"></i>';
+            }
+            saveProfileState();
+        }
+
+        function speakText(text) {
+            if (!window.speechSynthesis) return;
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'en-US';
+            utterance.rate = 0.9;
+            window.speechSynthesis.speak(utterance);
+        }
+
+        // --- TAB NAVIGATION ---
+        function switchTab(tabId) {
+            playSound('click');
+            const tabs = ['planner', 'practice', 'books', 'srs', 'logbook'];
+            tabs.forEach(t => {
+                const sec = document.getElementById(`sec-${t}`);
+                const btn = document.getElementById(`tab-${t}`);
+                if (sec) sec.classList.add('hidden');
+                if (btn) {
+                    btn.className = "px-4 py-2 rounded-xl font-tech text-xs font-bold transition flex items-center gap-2 bg-slate-900 text-slate-300 hover:text-white border border-slate-800 whitespace-nowrap";
+                }
+            });
+
+            const activeSec = document.getElementById(`sec-${tabId}`);
+            const activeBtn = document.getElementById(`tab-${tabId}`);
+            if (activeSec) activeSec.classList.remove('hidden');
+            if (activeBtn) {
+                activeBtn.className = "px-4 py-2 rounded-xl font-tech text-xs font-bold transition flex items-center gap-2 bg-cyan-500 text-slate-950 shadow-[0_0_15px_rgba(6,182,212,0.3)] whitespace-nowrap";
+            }
+
+            if (tabId === 'practice') renderExercise();
+            if (tabId === 'books') loadBookPassage(currentBookIdx);
+            if (tabId === 'srs') renderSrsCard();
+            if (tabId === 'logbook') renderAtaIndex();
+        }
+
+        // --- DASHBOARD DISPLAY & PERSISTENCE ---
+        function loadProfileState() {
+            const saved = localStorage.getItem('aerotech_user_profile');
+            if (saved) {
+                try { userProfile = JSON.parse(saved); } catch(e) {}
+            }
+            updateDashboardDisplay();
+            renderDailyChecklist();
+        }
+
+        function saveProfileState() {
+            localStorage.setItem('aerotech_user_profile', JSON.stringify(userProfile));
+            updateDashboardDisplay();
+        }
+
+        function updateDashboardDisplay() {
+            setSafeText('user-display-name', userProfile.name);
+            setSafeText('user-display-age', `${userProfile.age} Yrs`);
+            setSafeText('user-display-cefr', userProfile.cefr);
+            setSafeText('user-display-xp', userProfile.xp);
+            setSafeText('user-display-streak', `${userProfile.streak} Day`);
+            setSafeText('user-display-time', `${userProfile.dailyHours}h / Day`);
+            setSafeText('card-target-career', userProfile.targetCareer);
+            setSafeText('card-english-focus', userProfile.englishFocus);
+            setSafeText('panel-career', userProfile.targetCareer);
+            setSafeText('panel-focus', userProfile.englishFocus);
+            setSafeText('panel-shift', userProfile.workShift);
+            setSafeText('timeline-hours-desc', `At ${userProfile.dailyHours} Hours / Day`);
+        }
+
+        function setSafeText(id, text) {
+            const el = document.getElementById(id);
+            if (el) el.innerText = text;
+        }
+
+        // --- DAILY CHECKLIST & ACTION MATRIX ---
+        function renderDailyChecklist() {
+            const container = document.getElementById('daily-checklist-container');
+            if (!container) return;
+
+            const completedCount = dailyTasks.filter(t => t.completed).length;
+            setSafeText('daily-progress-badge', `${completedCount} / 5 Completed`);
+
+            container.innerHTML = dailyTasks.map(t => `
+                <div onclick="goToTaskActivity('${t.tabTarget}')" class="p-4 rounded-2xl bg-slate-900/80 border ${t.completed ? 'border-emerald-500/40 bg-emerald-950/10' : 'border-slate-800 hover:border-cyan-500/50'} transition flex items-center justify-between gap-3 cursor-pointer">
+                    <div class="flex items-center gap-3">
+                        <input type="checkbox" ${t.completed ? 'checked' : ''} onclick="event.stopPropagation(); toggleTask(${t.id})" class="w-5 h-5 rounded accent-cyan-500 cursor-pointer">
+                        <div>
+                            <h4 class="font-tech text-sm font-bold ${t.completed ? 'text-emerald-400 line-through' : 'text-white'}">${t.title}</h4>
+                            <p class="text-xs text-slate-400 font-mono">${t.desc}</p>
+                        </div>
+                    </div>
+                    <span class="px-3 py-1 rounded-full bg-slate-950 border border-slate-800 text-xs font-mono text-slate-300 whitespace-nowrap">${t.time}</span>
+                </div>
+            `).join('');
+        }
+
+        function toggleTask(id) {
+            playSound('click');
+            const task = dailyTasks.find(t => t.id === id);
+            if (task) {
+                task.completed = !task.completed;
+                if (task.completed) {
+                    userProfile.xp += 20;
+                    playSound('correct');
+                } else {
+                    userProfile.xp = Math.max(0, userProfile.xp - 20);
+                }
+                saveProfileState();
+                renderDailyChecklist();
+            }
+        }
+
+        function goToTaskActivity(tabName) {
+            playSound('click');
+            switchTab(tabName);
+        }
+
+        // --- SETTINGS MODAL ---
+        function openSettingsModal() {
+            playSound('click');
+            document.getElementById('settings-modal').classList.remove('hidden');
+            document.getElementById('settings-modal').classList.add('flex');
+        }
+
+        function closeSettingsModal() {
+            playSound('click');
+            document.getElementById('settings-modal').classList.remove('flex');
+            document.getElementById('settings-modal').classList.add('hidden');
+        }
+
+        function saveSettingsModal() {
+            playSound('correct');
+            userProfile.dailyHours = document.getElementById('modal-input-time').value;
+            userProfile.englishFocus = document.getElementById('modal-input-focus').value;
+            userProfile.targetCareer = document.getElementById('modal-input-career').value;
+            userProfile.workShift = document.getElementById('modal-input-shift').value;
+            
+            saveProfileState();
+            closeSettingsModal();
+        }
+
+        // --- DUOLINGO PRACTICE ENGINE (FOUNDATIONAL GRAMMAR + PROCEDURAL) ---
+        const pronouns = [
+            { pron: "I", tobe: "am", past: "was", future: "will be", presentVerb: "inspect" },
+            { pron: "He", tobe: "is", past: "was", future: "will be", presentVerb: "inspects" },
+            { pron: "She", tobe: "is", past: "was", future: "will be", presentVerb: "inspects" },
+            { pron: "It", tobe: "is", past: "was", future: "will be", presentVerb: "operates" },
+            { pron: "We", tobe: "are", past: "were", future: "will be", presentVerb: "inspect" },
+            { pron: "They", tobe: "are", past: "were", future: "will be", presentVerb: "inspect" },
+            { pron: "You", tobe: "are", past: "were", future: "will be", presentVerb: "inspect" }
+        ];
+
+        const grammarContexts = [
+            { text: "working at the hangar today", category: "General Aviation" },
+            { text: "checking the hydraulic pressure levels", category: "Hydraulics ATA 29" },
+            { text: "responsible for the engine overhaul", category: "Powerplant ATA 71" },
+            { text: "qualified for EASA/FAA certified sign-offs", category: "Certification" },
+            { text: "replacing the main landing gear brake pack", category: "Landing Gear ATA 32" },
+            { text: "calibrating the digital multimeter instrument", category: "Avionics ATA 24" },
+            { text: "reading the Aircraft Maintenance Manual (AMM)", category: "Manuals" },
+            { text: "preparing the safety inspection checklist", category: "Safety" }
+        ];
+
+        const grammarQuestionsBank = [
+            {
+                type: 'grammar',
+                prompt: "Complete with the correct Verb To Be:",
+                question: "He _______ an aircraft maintenance technician at the hangar.",
+                options: ["is", "am", "are", "be"],
+                answer: "is"
+            },
+            {
+                type: 'grammar',
+                prompt: "Complete with the correct Pronoun & Verb To Be:",
+                question: "_______ am studying FAA manuals for my A&P certification.",
+                options: ["I", "He", "She", "They"],
+                answer: "I"
+            },
+            {
+                type: 'grammar',
+                prompt: "Select the correct Past Tense form:",
+                question: "Yesterday, they _______ inspecting the hydraulic actuators.",
+                options: ["were", "was", "is", "are"],
+                answer: "were"
+            },
+            {
+                type: 'grammar',
+                prompt: "Select the correct Future Tense form:",
+                question: "Tomorrow, she _______ replace the main landing gear tire.",
+                options: ["will", "is", "was", "were"],
+                answer: "will"
+            }
+        ];
+
+        function generateRandomGrammarQuestion() {
+            const p = pronouns[Math.floor(Math.random() * pronouns.length)];
+            const ctx = grammarContexts[Math.floor(Math.random() * grammarContexts.length)];
+            const subType = Math.floor(Math.random() * 4); // 0: To Be, 1: Pronoun, 2: Past, 3: Future
+
+            if (subType === 0) {
+                // Verb To Be
+                const options = ["is", "am", "are", "be"].sort(() => Math.random() - 0.5);
+                return {
+                    type: 'grammar',
+                    prompt: "Selecione o Verbo To Be correto para a frase:",
+                    question: `${p.pron} _______ ${ctx.text}.`,
+                    options: options,
+                    answer: p.tobe
+                };
+            } else if (subType === 1) {
+                // Subject Pronouns
+                const options = [p.pron, ...pronouns.filter(x => x.pron !== p.pron).map(x => x.pron)].slice(0, 4).sort(() => Math.random() - 0.5);
+                return {
+                    type: 'grammar',
+                    prompt: "Escolha o Pronome correto que concorda com o verbo:",
+                    question: `_______ ${p.tobe} ${ctx.text}.`,
+                    options: options,
+                    answer: p.pron
+                };
+            } else if (subType === 2) {
+                // Past Tense
+                const options = [p.past, p.past === "was" ? "were" : "was", "is", "are"].sort(() => Math.random() - 0.5);
+                return {
+                    type: 'grammar',
+                    prompt: "Preencha com a forma verbal correta do Passado (Past Tense):",
+                    question: `Yesterday, ${p.pron.toLowerCase()} _______ ${ctx.text}.`,
+                    options: options,
+                    answer: p.past
+                };
+            } else {
+                // Future Tense
+                const options = ["will be", "was", "were", "is"].sort(() => Math.random() - 0.5);
+                return {
+                    type: 'grammar',
+                    prompt: "Preencha com a forma verbal correta do Futuro (Future Tense):",
+                    question: `Tomorrow, ${p.pron.toLowerCase()} _______ ${ctx.text}.`,
+                    options: options,
+                    answer: "will be"
+                };
+            }
+        }
+
+        const verbList = ["Inspected", "Torqued", "Replaced", "Bled", "Troubleshot", "Calibrated", "Safety-wired", "Flushed"];
+        const componentList = ["hydraulic actuator line", "main landing gear brake unit", "fuel boost pump assembly", "N1 rotor speed sensor", "elevator trim tab actuator", "generator control unit"];
+        const ataCodes = ["ATA 29", "ATA 32", "ATA 28", "ATA 71", "ATA 27", "ATA 24"];
+        const conditions = ["for signs of chafing and fluid leaks", "to specified torque limit of 280 in-lbs", "after finding internal seal degradation", "in accordance with Aircraft Maintenance Manual", "due to intermittent electrical fault"];
+
+        const exercisesBank = [
+            {
+                type: 'listening',
+                prompt: "Construa a instrução técnica de manutenção:",
+                audioText: "Inspect all hydraulic lines for signs of chafing.",
+                words: ["Inspect", "all", "hydraulic", "lines", "for", "signs", "of", "chafing."],
+                answer: "Inspect all hydraulic lines for signs of chafing."
+            },
+            {
+                type: 'verbs',
+                prompt: "Preencha a lacuna com a ação técnica exata:",
+                question: "Always _______ the wheel tie-bolts to 250 in-lbs using a calibrated wrench.",
+                options: ["torque", "bleed", "paint", "melt"],
+                answer: "torque"
+            },
+            {
+                type: 'syntax',
+                prompt: "Monte o relatório oficial de manutenção (Logbook entry):",
+                audioText: "Replaced main landing gear brake assembly and checked for leaks.",
+                words: ["Replaced", "main", "landing", "gear", "brake", "assembly", "and", "checked", "for", "leaks."],
+                answer: "Replaced main landing gear brake assembly and checked for leaks."
+            }
+        ];
+
+        function generateRandomExercise() {
+            const types = ['grammar', 'listening', 'verbs', 'syntax'];
+            const chosenType = activePracticeFilter === 'all' 
+                ? types[Math.floor(Math.random() * types.length)] 
+                : activePracticeFilter;
+
+            if (chosenType === 'grammar') {
+                return generateRandomGrammarQuestion();
+            }
+
+            const randomVerb = verbList[Math.floor(Math.random() * verbList.length)];
+            const randomComp = componentList[Math.floor(Math.random() * componentList.length)];
+            const randomAta = ataCodes[Math.floor(Math.random() * ataCodes.length)];
+            const randomCond = conditions[Math.floor(Math.random() * conditions.length)];
+
+            const fullSentence = `${randomVerb} ${randomComp} per ${randomAta} ${randomCond}.`;
+
+            if (chosenType === 'verbs') {
+                const options = [randomVerb, ...verbList.filter(v => v !== randomVerb).sort(() => Math.random() - 0.5).slice(0, 3)].sort(() => Math.random() - 0.5);
+                return {
+                    type: 'verbs',
+                    prompt: "Selecione a ação técnica correta para o logbook:",
+                    question: `Log entry: "_______ ${randomComp} per ${randomAta}."`,
+                    options: options,
+                    answer: randomVerb
+                };
+            } else {
+                const words = fullSentence.split(" ");
+                return {
+                    type: chosenType,
+                    prompt: chosenType === 'listening' ? "Escute e monte a ordem de trabalho aeronáutica:" : "Monte o registro técnico no padrão FAA/EASA:",
+                    audioText: fullSentence,
+                    words: words,
+                    answer: fullSentence
+                };
+            }
+        }
+
+        let selectedWords = [];
+        let activePracticeFilter = 'all';
+        let currentExercise = null;
+
+        function filterPracticeCategory(cat) {
+            playSound('click');
+            activePracticeFilter = cat;
+            renderExercise();
+        }
+
+        function renderExercise() {
+            const container = document.getElementById('exercise-container');
+            if (!container) return;
+
+            currentExercise = (Math.random() > 0.2) ? generateRandomExercise() : exercisesBank[Math.floor(Math.random() * exercisesBank.length)];
+            if (activePracticeFilter !== 'all' && currentExercise.type !== activePracticeFilter) {
+                currentExercise = generateRandomExercise();
+            }
+
+            selectedWords = [];
+
+            if (currentExercise.words) {
+                const shuffledWords = [...currentExercise.words].sort(() => Math.random() - 0.5);
+                container.innerHTML = `
+                    <div class="space-y-6">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-mono font-bold text-cyan-400 bg-cyan-500/15 px-3 py-1 rounded-full border border-cyan-500/30 uppercase flex items-center gap-1.5">
+                                <i class="fa-solid fa-shuffle text-[10px]"></i> ${currentExercise.type} (Dynamic)
+                            </span>
+                            <button onclick="speakText('${(currentExercise.audioText || currentExercise.answer).replace(/'/g, "\\'")}')" class="px-3 py-1.5 rounded-lg bg-slate-900 border border-cyan-500 text-cyan-400 text-xs font-mono hover:bg-cyan-500 hover:text-slate-950 transition flex items-center gap-2">
+                                <i class="fa-solid fa-volume-high"></i> Ouvir Áudio
+                            </button>
+                        </div>
+                        <p class="text-sm font-bold text-slate-200 font-mono">${currentExercise.prompt}</p>
+
+                        <!-- Answer Tile Zone -->
+                        <div id="selected-words-zone" class="min-h-[60px] p-4 rounded-xl bg-slate-950 border border-slate-800 flex flex-wrap gap-2 items-center">
+                            <span class="text-xs text-slate-600 font-mono italic">Toque nos blocos abaixo na ordem correta...</span>
+                        </div>
+
+                        <!-- Option Tile Zone -->
+                        <div class="flex flex-wrap gap-2">
+                            ${shuffledWords.map((w, idx) => `
+                                <button onclick="pickWord('${w.replace(/'/g, "\\'")}', this)" class="px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-700 hover:border-cyan-400 text-xs font-mono font-bold text-slate-100 transition shadow-sm">
+                                    ${w}
+                                </button>
+                            `).join('')}
+                        </div>
+
+                        <div id="exercise-feedback" class="hidden p-4 rounded-xl border text-xs font-mono font-bold"></div>
+
+                        <div class="flex items-center gap-3">
+                            <button onclick="checkSentenceAnswer()" class="px-6 py-3 rounded-xl bg-cyan-500 text-slate-950 font-tech font-bold text-xs hover:bg-cyan-400 transition shadow-[0_0_15px_rgba(6,182,212,0.3)]">
+                                VERIFICAR RESPOSTA
+                            </button>
+                            <button onclick="renderExercise()" class="px-6 py-3 rounded-xl bg-slate-900 border border-slate-700 text-slate-300 font-tech font-bold text-xs hover:bg-slate-800 transition flex items-center gap-2">
+                                <i class="fa-solid fa-forward"></i> PRÓXIMO EXERCÍCIO
+                            </button>
+                        </div>
+                    </div>
+                `;
+            } else if (currentExercise.options) {
+                container.innerHTML = `
+                    <div class="space-y-6">
+                        <span class="text-xs font-mono font-bold text-amber-400 bg-amber-500/15 px-3 py-1 rounded-full border border-amber-500/30 uppercase flex items-center gap-1.5">
+                            <i class="fa-solid fa-shuffle text-[10px]"></i> ${currentExercise.type} (Dynamic)
+                        </span>
+                        <p class="text-sm font-bold text-slate-200 font-mono">${currentExercise.prompt}</p>
+                        <h3 class="text-base font-mono text-white p-4 rounded-xl bg-slate-950 border border-slate-800">${currentExercise.question}</h3>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 font-mono text-xs">
+                            ${currentExercise.options.map(opt => `
+                                <button onclick="checkMultipleChoice('${opt.replace(/'/g, "\\'")}', '${currentExercise.answer.replace(/'/g, "\\'")}')" class="p-3.5 rounded-xl bg-slate-900 border border-slate-800 hover:border-cyan-400 text-left font-bold text-slate-200 transition">
+                                    ${opt}
+                                </button>
+                            `).join('')}
+                        </div>
+
+                        <div id="exercise-feedback" class="hidden p-4 rounded-xl border text-xs font-mono font-bold"></div>
+                        <button onclick="renderExercise()" class="px-6 py-3 rounded-xl bg-slate-900 border border-slate-700 text-slate-300 font-tech font-bold text-xs hover:bg-slate-800 transition flex items-center gap-2">
+                            <i class="fa-solid fa-forward"></i> PRÓXIMO EXERCÍCIO
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        function pickWord(word, btnEl) {
+            playSound('click');
+            selectedWords.push(word);
+            btnEl.style.opacity = '0.3';
+            btnEl.style.pointerEvents = 'none';
+
+            const zone = document.getElementById('selected-words-zone');
+            if (zone) {
+                zone.innerHTML = selectedWords.map(w => `<span class="px-3 py-1.5 rounded-lg bg-cyan-500/20 border border-cyan-500/40 text-cyan-300 font-mono text-xs">${w}</span>`).join(' ');
+            }
+        }
+
+        function checkSentenceAnswer() {
+            if (!currentExercise) return;
+            const userStr = selectedWords.join(' ');
+            const feedback = document.getElementById('exercise-feedback');
+            if (!feedback) return;
+
+            feedback.classList.remove('hidden');
+            if (userStr === currentExercise.answer) {
+                playSound('correct');
+                userProfile.xp += 10;
+                saveProfileState();
+                feedback.className = "p-4 rounded-xl border border-emerald-500/40 bg-emerald-950/20 text-emerald-400 text-xs font-mono font-bold flex items-center justify-between";
+                feedback.innerHTML = `<span><i class="fa-solid fa-circle-check"></i> Correto! Excelente construção técnica. (+10 XP)</span>`;
+            } else {
+                playSound('error');
+                feedback.className = "p-4 rounded-xl border border-red-500/40 bg-red-950/20 text-red-400 text-xs font-mono font-bold flex items-center justify-between";
+                feedback.innerHTML = `<span><i class="fa-solid fa-circle-xmark"></i> Incorreto. Tente novamente! (Tentativas ilimitadas)</span> <button onclick="renderExercise()" class="underline text-white">Tentar Novamente</button>`;
+            }
+        }
+
+        function checkMultipleChoice(selected, correct) {
+            const feedback = document.getElementById('exercise-feedback');
+            if (!feedback) return;
+
+            feedback.classList.remove('hidden');
+            if (selected === correct) {
+                playSound('correct');
+                userProfile.xp += 10;
+                saveProfileState();
+                feedback.className = "p-4 rounded-xl border border-emerald-500/40 bg-emerald-950/20 text-emerald-400 text-xs font-mono font-bold";
+                feedback.innerHTML = `<i class="fa-solid fa-circle-check"></i> Perfeito! Resposta correta. (+10 XP)`;
+            } else {
+                playSound('error');
+                feedback.className = "p-4 rounded-xl border border-red-500/40 bg-red-950/20 text-red-400 text-xs font-mono font-bold flex items-center justify-between";
+                feedback.innerHTML = `<span><i class="fa-solid fa-circle-xmark"></i> Ops! Não é este. (Tentativas ilimitadas)</span>`;
+            }
+        }
+
+        // --- BOOKS & AMM READER ---
+        const bookPassages = [
+            {
+                title: "AMM ATA 29 - Hydraulic Line Inspection & Pressure Test",
+                level: "B1 - Technical Maintenance",
+                text: "Before pressurizing hydraulic system 1 to 3,000 PSI, perform a thorough visual inspection of all rigid titanium tubing and flexible synthetic rubber hoses between fuselage frame 24 and frame 32. Inspect for chafing against primary structure. Verify tube clamps are torqued to 35-40 in-lbs and cushion inserts show no severe hardening.",
+                notes: [
+                    "rigid titanium tubing = tubulação rígida de titânio",
+                    "synthetic rubber hoses = mangueiras de borracha sintética",
+                    "chafing = atrito / fricção prejudicial",
+                    "cushion inserts = calços emborrachados da braçadeira"
+                ]
+            },
+            {
+                title: "AMM ATA 71 - Powerplant Fan Blade Inspection & Blend-out",
+                level: "B2 - Engine Specialist",
+                text: "Visual inspection of the CFM56 / LEAP turbofan fan assembly revealed minor Foreign Object Damage (FOD) on blade #14 leading edge. Measure damage depth using an optical depth micrometer. Blend-out repairs must comply with Engine Maintenance Manual 72-21-00 limits using 400-grit aluminum oxide abrasive paper.",
+                notes: [
+                    "Foreign Object Damage (FOD) = Dano por Objeto Estranho",
+                    "leading edge = bordo de ataque da palheta",
+                    "depth micrometer = micrómetro de profundidade",
+                    "blend-out = lixamento suave/retificação autorizada"
+                ]
+            },
+            {
+                title: "Foundational Grammar in Aviation: Pronouns & Verb To Be",
+                level: "A1 - Foundation",
+                text: "I am an aircraft mechanic. He is inspecting the landing gear. She is checking the hydraulic fluid levels. It is a dual-engine commercial airliner. We are working together in hangar 4. They are authorized to sign maintenance logbooks.",
+                notes: [
+                    "I am = Eu sou / Eu estou",
+                    "He / She / It is = Ele / Ela / Isto é / está",
+                    "We / They are = Nós / Eles são / estão",
+                    "authorized = autorizado"
+                ]
+            }
+        ];
+
+        let currentBookIdx = 0;
+
+        function loadBookPassage(idx) {
+            currentBookIdx = (idx + bookPassages.length) % bookPassages.length;
+            const p = bookPassages[currentBookIdx];
+            setSafeText('book-title', p.title);
+            setSafeText('book-level', p.level);
+            setSafeText('book-text', p.text);
+            setSafeText('book-counter', `${currentBookIdx + 1} / ${bookPassages.length}`);
+
+            const notesEl = document.getElementById('book-notes');
+            if (notesEl) {
+                notesEl.innerHTML = p.notes.map(n => `
+                    <div class="p-2.5 rounded-lg bg-slate-900 border border-slate-800 text-emerald-400 flex items-center gap-2">
+                        <i class="fa-solid fa-plane-up text-emerald-400"></i> ${n}
+                    </div>
+                `).join('');
+            }
+        }
+
+        function nextBookPassage() { playSound('click'); loadBookPassage(currentBookIdx + 1); }
+        function prevBookPassage() { playSound('click'); loadBookPassage(currentBookIdx - 1); }
+        function randomBookPassage() { playSound('click'); loadBookPassage(Math.floor(Math.random() * bookPassages.length)); }
+        function speakCurrentBookText() {
+            const p = bookPassages[currentBookIdx];
+            if (p) speakText(p.text);
+        }
+
+        // --- SRS FLASHCARDS ---
+        const srsDeck = [
+            { term: "Verb To Be (Am / Is / Are)", def: "Usado para estados, profissões e localização. Ex: I am a mechanic, He is working, We are ready.", cat: "Grammar Foundations" },
+            { term: "Pronouns (I, He, She, It, We, They)", def: "Pronomes pessoais do caso reto essenciais para iniciar frases técnicas e relatórios.", cat: "Grammar Foundations" },
+            { term: "Hydraulic Actuator", def: "Atuador hidráulico responsável por converter pressão de fluido em movimento mecânico linear.", cat: "ATA 29 - Hydraulics" },
+            { term: "Landing Gear Strut", def: "Perna do trem de pouso principal ou do nariz, contendo amortecedor oleo-pneumático.", cat: "ATA 32 - Landing Gear" },
+            { term: "Torque Wrench", def: "Chave de torque calibrada para garantir o aperto especificado em parafusos estruturais.", cat: "Tools & Equipment" }
+        ];
+
+        let currentSrsIdx = 0;
+
+        function renderSrsCard() {
+            const card = srsDeck[currentSrsIdx];
+            if (!card) return;
+            setSafeText('srs-term', card.term);
+            setSafeText('srs-definition', card.def);
+            setSafeText('srs-category', card.cat);
+            setSafeText('srs-counter', `${currentSrsIdx + 1} / ${srsDeck.length}`);
+            setSafeText('srs-badge', srsDeck.length);
+            
+            const defEl = document.getElementById('srs-definition');
+            const revealBtn = document.getElementById('srs-reveal-btn');
+            const gradingArea = document.getElementById('srs-grading-area');
+            if (defEl) defEl.classList.add('hidden');
+            if (revealBtn) revealBtn.classList.remove('hidden');
+            if (gradingArea) gradingArea.classList.add('hidden');
+        }
+
+        function revealSrsAnswer() {
+            playSound('click');
+            const defEl = document.getElementById('srs-definition');
+            const revealBtn = document.getElementById('srs-reveal-btn');
+            const gradingArea = document.getElementById('srs-grading-area');
+            if (defEl) defEl.classList.remove('hidden');
+            if (revealBtn) revealBtn.classList.add('hidden');
+            if (gradingArea) gradingArea.classList.remove('hidden');
+        }
+
+        function gradeSrsCard(grade) {
+            playSound('correct');
+            userProfile.xp += (grade === 'easy' ? 15 : grade === 'medium' ? 10 : 5);
+            saveProfileState();
+            currentSrsIdx = (currentSrsIdx + 1) % srsDeck.length;
+            renderSrsCard();
+        }
+
+        // --- LOGBOOK & ATA SPEC 100 ---
+        function generateLogEntry() {
+            playSound('correct');
+            const action = document.getElementById('log-action').value;
+            const comp = document.getElementById('log-component').value;
+            const ata = document.getElementById('log-ata').value;
+            const preview = document.getElementById('log-preview-box');
+
+            const entryText = `${action} ${comp} in accordance with ${ata}AMM standard procedures. Checked for leaks and structural integrity. Return to service authorized.`;
+            if (preview) {
+                preview.className = "p-4 rounded-xl bg-slate-950 border border-blue-500/40 font-mono text-xs text-cyan-300 leading-relaxed";
+                preview.innerText = entryText;
+            }
+            speakText(entryText);
+        }
+
+        function renderAtaIndex() {
+            const container = document.getElementById('ata-index-container');
+            if (!container) return;
+            const ataChapters = [
+                { code: "ATA 05", name: "Time Limits / Maintenance Checks" },
+                { code: "ATA 24", name: "Electrical Power System" },
+                { code: "ATA 27", name: "Flight Controls" },
+                { code: "ATA 29", name: "Hydraulic Power System" },
+                { code: "ATA 32", name: "Landing Gear System" },
+                { code: "ATA 71", name: "Powerplant / Turbine Engine" }
+            ];
+            container.innerHTML = ataChapters.map(c => `
+                <div class="p-2.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-300">
+                    <strong class="text-blue-400">${c.code}:</strong> ${c.name}
+                </div>
+            `).join('');
+        }
+
+        // --- INITIALIZATION ON WINDOW LOAD ---
+        window.onload = function() {
+            loadProfileState();
+            renderDailyChecklist();
+            renderExercise();
+        };
+    </script>
+</body>
+</html>
